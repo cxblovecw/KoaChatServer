@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "target": "es5",                     
+    "strict": true,                          
+    "esModuleInterop": true,   
+    "allowJs": true,            
+    "checkJs": true,
+  },
+  "exclude": [
+    "node_modules"
+  ]
+}
