@@ -56,13 +56,19 @@ exports.getUserInfoByField = getUserInfoByField;
 function getUserInfoByCondition(condition) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
-            return [2 /*return*/, init_js_1.User.find(condition).slice('signature', 1).then(function (result) {
-                    console.log(result);
-                })];
+            return [2 /*return*/, init_js_1.User.find(condition)];
         });
     });
 }
 exports.getUserInfoByCondition = getUserInfoByCondition;
+function userExists(phone) {
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            return [2 /*return*/, init_js_1.User.exists({ phone: phone })];
+        });
+    });
+}
+exports.userExists = userExists;
 // getUserInfo("account",10000)
 // getUserInfoByCondition({
 //   account:10000,
@@ -96,6 +102,16 @@ function updateSignature(account, signature) {
     });
 }
 exports.updateSignature = updateSignature;
+function getNowAccount() {
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            init_js_1.User.count({}).then(function (data) {
+                console.log(data);
+            });
+            return [2 /*return*/];
+        });
+    });
+}
 // 根据_Id删除指定个性签名
 function removeSignature(account, signatureId) {
     return __awaiter(this, void 0, void 0, function () {
@@ -159,3 +175,4 @@ exports.removeFriend = removeFriend;
 //   date: new Date(),
 // })
 // removeSignature(10000,"5edb5cd406e6b326281a8e6c")
+getNowAccount();

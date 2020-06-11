@@ -6,6 +6,7 @@ var Schema = mongoose.Schema;
 var UserSchema = new Schema({
     userName: String,
     password: String,
+    phone: String,
     friend: [
         {
             account: Number,
@@ -27,7 +28,6 @@ var UserSchema = new Schema({
             }
         },
     ],
-    phone: String,
     account: Number,
     qcCodeUrl: String,
     avatarUrl: String,

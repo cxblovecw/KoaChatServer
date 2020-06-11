@@ -36,22 +36,68 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+var User_1 = require("../../mongoDB/User");
 // 注册
 function register(ctx, next) {
     return __awaiter(this, void 0, void 0, function () {
+        var phone;
         return __generator(this, function (_a) {
-            return [2 /*return*/];
+            switch (_a.label) {
+                case 0:
+                    console.log(ctx.query.phone);
+                    phone = ctx.query.phone;
+                    return [4 /*yield*/, User_1.userExists(phone).then(function (result) {
+                            console.log(result);
+                            if (result) {
+                                ctx.body = 'registered';
+                            }
+                            else {
+                                ctx.body = 10009;
+                            }
+                        })];
+                case 1:
+                    _a.sent();
+                    return [2 /*return*/];
+            }
         });
     });
 }
+exports.register = register;
 // 登录
-function login() {
+function login(ctx, next) {
     return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            return [2 /*return*/];
+        var _a, account, password;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    _a = ctx.query, account = _a.account, password = _a.password;
+                    if (!account) return [3 /*break*/, 2];
+                    return [4 /*yield*/, User_1.getUserInfoByField("account", account).then(function (result) {
+                            if (result.length == 0) {
+                                ctx.body = 'noAccount';
+                            }
+                            else if (result[0].password != password) {
+                                ctx.body = "passwordError";
+                            }
+                            else {
+                                ctx.body = 'validation';
+                            }
+                        }).catch(function (err) {
+                            console.log(err);
+                            ctx.body = 'error';
+                        })];
+                case 1:
+                    _b.sent();
+                    return [3 /*break*/, 3];
+                case 2:
+                    ctx.body = 'error';
+                    _b.label = 3;
+                case 3: return [2 /*return*/];
+            }
         });
     });
 }
+exports.login = login;
 // 修改头像
 function updateAvatar() {
     return __awaiter(this, void 0, void 0, function () {

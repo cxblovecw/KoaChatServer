@@ -13,10 +13,14 @@ async function getUserInfoByField(field:string,value:any) {
 
 // 根据条件对象获取用户信息
 async function getUserInfoByCondition(condition:object){
-  return User.find(condition).slice('signature',1).then(result=>{
-    console.log(result)
-  })
+  return User.find(condition)
 }
+
+async function userExists(phone:any){
+  return User.exists({phone:phone})
+}
+
+
 
 // getUserInfo("account",10000)
 // getUserInfoByCondition({
@@ -52,6 +56,11 @@ async function updateSignature(account:number, signature:object) {
   // }).then(err=>console.log(err))
 }
 
+async function getNowAccount(){
+  User.count({}).then(data=>{
+    console.log(data)
+  })
+}
 
 // 根据_Id删除指定个性签名
 async function removeSignature(account:Number,signatureId:string){
@@ -98,6 +107,7 @@ export{
   getSignature,
   addFriend,
   removeFriend,
+  userExists,
 }
 // getSignature(10000).then(result=>console.log(result))
 
@@ -107,3 +117,4 @@ export{
 // })
 
 // removeSignature(10000,"5edb5cd406e6b326281a8e6c")
+getNowAccount();

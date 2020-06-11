@@ -40,7 +40,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var koa_router_1 = __importDefault(require("koa-router"));
-var User_1 = require("../../mongoDB/User");
+var userController_1 = require("./userController");
 var user = new koa_router_1.default();
 exports.user = user;
 user.get('/user', function (ctx, next) { return __awaiter(void 0, void 0, void 0, function () {
@@ -49,39 +49,5 @@ user.get('/user', function (ctx, next) { return __awaiter(void 0, void 0, void 0
         return [2 /*return*/];
     });
 }); });
-user.get("/register", function (ctx, next) { return __awaiter(void 0, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-        ctx.body = "注册";
-        return [2 /*return*/];
-    });
-}); });
-user.get("/login", function (ctx, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, account, password;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
-            case 0:
-                _a = ctx.query, account = _a.account, password = _a.password;
-                if (!account) return [3 /*break*/, 2];
-                return [4 /*yield*/, User_1.getUserInfoByField("account", account).then(function (result) {
-                        if (result.length == 0) {
-                            ctx.body = 'noAccount';
-                        }
-                        else if (result[0].password != password) {
-                            ctx.body = "passwordError";
-                        }
-                        else {
-                            ctx.body = 'validation';
-                        }
-                    }).catch(function (err) {
-                        ctx.body = 'error';
-                    })];
-            case 1:
-                _b.sent();
-                return [3 /*break*/, 3];
-            case 2:
-                ctx.body = 'error';
-                _b.label = 3;
-            case 3: return [2 /*return*/];
-        }
-    });
-}); });
+user.get("/register", userController_1.register);
+user.get("/login", userController_1.login);

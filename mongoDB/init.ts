@@ -4,6 +4,7 @@ const Schema = mongoose.Schema;
 const UserSchema = new Schema({
   userName: String,
   password: String,
+  phone: String,
   friend: [
     {
       account: Number,
@@ -25,7 +26,6 @@ const UserSchema = new Schema({
       }
     },
   ],
-  phone: String,
   account: Number,
   qcCodeUrl: String,
   avatarUrl: String,
