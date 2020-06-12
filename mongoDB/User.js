@@ -47,7 +47,7 @@ exports.addUser = addUser;
 function getUserInfoByField(field, value) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
-            return [2 /*return*/, init_js_1.User.where(field, value).find()];
+            return [2 /*return*/, init_js_1.User.where(field, value).findOne()];
         });
     });
 }
@@ -61,6 +61,7 @@ function getUserInfoByCondition(condition) {
     });
 }
 exports.getUserInfoByCondition = getUserInfoByCondition;
+// 判断手机是否注册
 function userExists(phone) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
@@ -102,16 +103,18 @@ function updateSignature(account, signature) {
     });
 }
 exports.updateSignature = updateSignature;
+// updateSignature(10000,{
+//   "date":new Date(),
+//   "text":"成年人的世界没有容易二字"
+// })
 function getNowAccount() {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
-            init_js_1.User.count({}).then(function (data) {
-                console.log(data);
-            });
-            return [2 /*return*/];
+            return [2 /*return*/, init_js_1.User.count({})];
         });
     });
 }
+exports.getNowAccount = getNowAccount;
 // 根据_Id删除指定个性签名
 function removeSignature(account, signatureId) {
     return __awaiter(this, void 0, void 0, function () {
@@ -175,4 +178,7 @@ exports.removeFriend = removeFriend;
 //   date: new Date(),
 // })
 // removeSignature(10000,"5edb5cd406e6b326281a8e6c")
-getNowAccount();
+// async function run(){
+//   console.log(await getNowAccount())
+// }
+// run()

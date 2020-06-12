@@ -1,5 +1,6 @@
 import koa from 'koa';
 const app=new koa();
+import assets =require('koa-static');
 import bodyParser=require('koa-bodyparser')
 import {user} from "./routers/user/user.js";
 import {chat} from "./routers/chat/chat.js";
@@ -8,7 +9,7 @@ import {moments} from "./routers/moments/moments.js";
 import {contact} from "./routers/contact/contact.js";
 
 
-app.use(bodyParser());
+app.use(bodyParser()).use(assets(__dirname+"/assets"));
 app
 .use(user.routes())
 .use(chat.routes())

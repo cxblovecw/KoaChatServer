@@ -8,7 +8,7 @@ function addUser(user: object) {
 
 // 根据字段的值获取用户信息
 async function getUserInfoByField(field:string,value:any) {
-  return User.where(field,value).find()
+  return User.where(field,value).findOne()
 }
 
 // 根据条件对象获取用户信息
@@ -16,6 +16,7 @@ async function getUserInfoByCondition(condition:object){
   return User.find(condition)
 }
 
+// 判断手机是否注册
 async function userExists(phone:any){
   return User.exists({phone:phone})
 }
@@ -56,10 +57,13 @@ async function updateSignature(account:number, signature:object) {
   // }).then(err=>console.log(err))
 }
 
+// updateSignature(10000,{
+//   "date":new Date(),
+//   "text":"成年人的世界没有容易二字"
+// })
+
 async function getNowAccount(){
-  User.count({}).then(data=>{
-    console.log(data)
-  })
+  return User.count({})
 }
 
 // 根据_Id删除指定个性签名
@@ -108,6 +112,7 @@ export{
   addFriend,
   removeFriend,
   userExists,
+  getNowAccount,
 }
 // getSignature(10000).then(result=>console.log(result))
 
@@ -117,4 +122,9 @@ export{
 // })
 
 // removeSignature(10000,"5edb5cd406e6b326281a8e6c")
-getNowAccount();
+
+// async function run(){
+//   console.log(await getNowAccount())
+// }
+
+// run()

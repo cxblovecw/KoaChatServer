@@ -1,5 +1,5 @@
 import Router from "koa-router";
-import {login,register} from './userController';
+import {login,register,getUserInfo} from './userController';
 const user:Router=new Router();
 
 user.get('/user',async(ctx,next)=>{
@@ -10,4 +10,6 @@ user.get('/user',async(ctx,next)=>{
 user.get("/register",register)
 
 user.get("/login",login)
+
+user.get('/info',getUserInfo)
 export {user}

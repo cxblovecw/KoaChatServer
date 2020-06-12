@@ -36,27 +36,46 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+var fs = require("fs");
+var path = require("path");
 var User_1 = require("../../mongoDB/User");
+var config = require('../../config.json');
 // 注册
 function register(ctx, next) {
     return __awaiter(this, void 0, void 0, function () {
-        var phone;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
+        var _a, phone, password, userName;
+        var _this = this;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
                 case 0:
-                    console.log(ctx.query.phone);
-                    phone = ctx.query.phone;
-                    return [4 /*yield*/, User_1.userExists(phone).then(function (result) {
-                            console.log(result);
-                            if (result) {
-                                ctx.body = 'registered';
-                            }
-                            else {
-                                ctx.body = 10009;
-                            }
-                        })];
+                    console.log(ctx.query);
+                    _a = ctx.query, phone = _a.phone, password = _a.password, userName = _a.userName;
+                    return [4 /*yield*/, User_1.userExists(phone).then(function (result) { return __awaiter(_this, void 0, void 0, function () {
+                            var nowAccount;
+                            return __generator(this, function (_a) {
+                                switch (_a.label) {
+                                    case 0:
+                                        if (!result) return [3 /*break*/, 1];
+                                        ctx.body = 'registered';
+                                        return [3 /*break*/, 3];
+                                    case 1: return [4 /*yield*/, User_1.getNowAccount()];
+                                    case 2:
+                                        nowAccount = (_a.sent()) + 10000;
+                                        User_1.addUser({
+                                            "account": nowAccount,
+                                            "phone": phone,
+                                            "userName": userName,
+                                            "password": password,
+                                            "avatarUrl": getRandomAvatar(),
+                                        });
+                                        ctx.body = nowAccount;
+                                        _a.label = 3;
+                                    case 3: return [2 /*return*/];
+                                }
+                            });
+                        }); })];
                 case 1:
-                    _a.sent();
+                    _b.sent();
                     return [2 /*return*/];
             }
         });
@@ -71,12 +90,14 @@ function login(ctx, next) {
             switch (_b.label) {
                 case 0:
                     _a = ctx.query, account = _a.account, password = _a.password;
+                    account = parseInt(account);
                     if (!account) return [3 /*break*/, 2];
                     return [4 /*yield*/, User_1.getUserInfoByField("account", account).then(function (result) {
+                            console.log(result);
                             if (result.length == 0) {
                                 ctx.body = 'noAccount';
                             }
-                            else if (result[0].password != password) {
+                            else if (result.password != password) {
                                 ctx.body = "passwordError";
                             }
                             else {
@@ -98,6 +119,33 @@ function login(ctx, next) {
     });
 }
 exports.login = login;
+// 获取随机头像
+function getRandomAvatar() {
+    var avatarList = fs.readdirSync(path.resolve("assets/project/images/avatars"));
+    return "http://" + config.host + ":" + config.port + "/project/images/avatars/" + avatarList[Math.floor(Math.random() * 21)];
+}
+// 获取用户信息
+function getUserInfo(ctx, next) {
+    return __awaiter(this, void 0, void 0, function () {
+        var account, _a, _b, _c;
+        return __generator(this, function (_d) {
+            switch (_d.label) {
+                case 0:
+                    account = ctx.query.account;
+                    _b = (_a = console).log;
+                    return [4 /*yield*/, User_1.getUserInfoByField("account", account)];
+                case 1:
+                    _b.apply(_a, [_d.sent()]);
+                    _c = ctx;
+                    return [4 /*yield*/, User_1.getUserInfoByField("account", account)];
+                case 2:
+                    _c.body = (_d.sent());
+                    return [2 /*return*/];
+            }
+        });
+    });
+}
+exports.getUserInfo = getUserInfo;
 // 修改头像
 function updateAvatar() {
     return __awaiter(this, void 0, void 0, function () {
