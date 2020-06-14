@@ -52,3 +52,5 @@ user.get('/user', function (ctx, next) { return __awaiter(void 0, void 0, void 0
 user.get("/register", userController_1.register);
 user.get("/login", userController_1.login);
 user.get('/info', userController_1.getUserInfo);
+user.get("/updateUserInfo", userController_1.updateUserInfo);
+user.get("/updateSignature", userController_1.updateSignature);

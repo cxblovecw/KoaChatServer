@@ -27,7 +27,7 @@ const UserSchema = new Schema({
     },
   ],
   account: Number,
-  qcCodeUrl: String,
+  qrCodeUrl: String,
   avatarUrl: String,
   signature: {
     type:[{

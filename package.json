@@ -25,7 +25,8 @@
     "koa-router": "^8.0.8",
     "koa-static": "^1.5.2",
     "koa-views": "^3.1.0",
-    "mongoose": "^5.9.17"
+    "mongoose": "^5.9.17",
+    "qr-image": "^3.2.0"
   },
   "devDependencies": {
     "@types/koa": "^2.11.3",

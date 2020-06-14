@@ -29,7 +29,7 @@ async function userExists(phone:any){
 //   phone:"17606059886"
 // })
 
-// 根据账号修改某个字段
+// 根据账号修改某些字段
 function updateField(account: number, updateContent: object) {
   User.findOneAndUpdate({ "account": account }, updateContent).then(() => {
   })

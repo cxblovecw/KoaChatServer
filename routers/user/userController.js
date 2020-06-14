@@ -35,10 +35,19 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var fs = require("fs");
 var path = require("path");
-var User_1 = require("../../mongoDB/User");
+var qrImage = require("qr-image");
+// import { getUserInfoByField,userExists, getNowAccount, addUser, updateField,updateSignature} from "../../mongoDB/User";
+var User = __importStar(require("../../mongoDB/User"));
 var config = require('../../config.json');
 // 注册
 function register(ctx, next) {
@@ -50,25 +59,38 @@ function register(ctx, next) {
                 case 0:
                     console.log(ctx.query);
                     _a = ctx.query, phone = _a.phone, password = _a.password, userName = _a.userName;
-                    return [4 /*yield*/, User_1.userExists(phone).then(function (result) { return __awaiter(_this, void 0, void 0, function () {
-                            var nowAccount;
+                    return [4 /*yield*/, User.userExists(phone).then(function (result) { return __awaiter(_this, void 0, void 0, function () {
+                            var nowAccount_1;
                             return __generator(this, function (_a) {
                                 switch (_a.label) {
                                     case 0:
                                         if (!result) return [3 /*break*/, 1];
                                         ctx.body = 'registered';
                                         return [3 /*break*/, 3];
-                                    case 1: return [4 /*yield*/, User_1.getNowAccount()];
+                                    case 1: return [4 /*yield*/, User.getNowAccount()];
                                     case 2:
-                                        nowAccount = (_a.sent()) + 10000;
-                                        User_1.addUser({
-                                            "account": nowAccount,
-                                            "phone": phone,
-                                            "userName": userName,
-                                            "password": password,
-                                            "avatarUrl": getRandomAvatar(),
+                                        nowAccount_1 = (_a.sent()) + 10000;
+                                        fs.mkdir("assets/users/" + nowAccount_1, { recursive: true }, function (err, result) {
+                                            if (err) { }
+                                            else {
+                                                var qrPng = qrImage.image({
+                                                    account: nowAccount_1
+                                                }.toString(), { type: 'png' });
+                                                var qrCodeUrl = "users/" + nowAccount_1 + "/qrcode.png";
+                                                qrPng.pipe(fs.createWriteStream("assets/" + qrCodeUrl));
+                                                User.addUser({
+                                                    "account": nowAccount_1,
+                                                    "phone": phone,
+                                                    "userName": userName,
+                                                    "password": password,
+                                                    "avatarUrl": getRandomAvatar(),
+                                                    "sex": "保密",
+                                                    "age": 18,
+                                                    "qrCodeUrl": "http://" + config.host + ":" + config.port + "/" + qrCodeUrl
+                                                });
+                                            }
                                         });
-                                        ctx.body = nowAccount;
+                                        ctx.body = nowAccount_1;
                                         _a.label = 3;
                                     case 3: return [2 /*return*/];
                                 }
@@ -92,9 +114,9 @@ function login(ctx, next) {
                     _a = ctx.query, account = _a.account, password = _a.password;
                     account = parseInt(account);
                     if (!account) return [3 /*break*/, 2];
-                    return [4 /*yield*/, User_1.getUserInfoByField("account", account).then(function (result) {
+                    return [4 /*yield*/, User.getUserInfoByField("account", account).then(function (result) {
                             console.log(result);
-                            if (result.length == 0) {
+                            if (result == null || result.length == 0) {
                                 ctx.body = 'noAccount';
                             }
                             else if (result.password != password) {
@@ -133,11 +155,11 @@ function getUserInfo(ctx, next) {
                 case 0:
                     account = ctx.query.account;
                     _b = (_a = console).log;
-                    return [4 /*yield*/, User_1.getUserInfoByField("account", account)];
+                    return [4 /*yield*/, User.getUserInfoByField("account", account)];
                 case 1:
                     _b.apply(_a, [_d.sent()]);
                     _c = ctx;
-                    return [4 /*yield*/, User_1.getUserInfoByField("account", account)];
+                    return [4 /*yield*/, User.getUserInfoByField("account", account)];
                 case 2:
                     _c.body = (_d.sent());
                     return [2 /*return*/];
@@ -147,7 +169,7 @@ function getUserInfo(ctx, next) {
 }
 exports.getUserInfo = getUserInfo;
 // 修改头像
-function updateAvatar() {
+function updateAvatar(ctx, next) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             return [2 /*return*/];
@@ -155,18 +177,38 @@ function updateAvatar() {
     });
 }
 // 修改个性签名
-function updateSignature() {
+function updateSignature(ctx, next) {
     return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+        var _a, account, signature;
+        return __generator(this, function (_b) {
+            _a = ctx.query, account = _a.account, signature = _a.signature;
+            User.updateSignature(account, {
+                date: new Date(),
+                text: signature
+            }).then(function (result) {
+                ctx.body = "ok";
+            }).catch(function (err) {
+                ctx.body = "err";
+            });
             return [2 /*return*/];
         });
     });
 }
+exports.updateSignature = updateSignature;
 // 修改用户信息
-function modifyUserInfo() {
+function updateUserInfo(ctx, next) {
     return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+        var _a, account, userName, age, sex;
+        return __generator(this, function (_b) {
+            _a = ctx.query, account = _a.account, userName = _a.userName, age = _a.age, sex = _a.sex;
+            User.updateField(account, {
+                "userName": userName,
+                "age": age,
+                "sex": sex
+            });
+            ctx.body = "ok";
             return [2 /*return*/];
         });
     });
 }
+exports.updateUserInfo = updateUserInfo;

@@ -75,7 +75,7 @@ exports.userExists = userExists;
 //   account:10000,
 //   phone:"17606059886"
 // })
-// 根据账号修改某个字段
+// 根据账号修改某些字段
 function updateField(account, updateContent) {
     init_js_1.User.findOneAndUpdate({ "account": account }, updateContent).then(function () {
     });
