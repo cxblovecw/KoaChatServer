@@ -47,20 +47,29 @@ exports.addUser = addUser;
 function getUserInfoByField(field, value) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
-            return [2 /*return*/, init_js_1.User.where(field, value).findOne()];
+            return [2 /*return*/, init_js_1.User.where(field, value).findOne({}, { friend: 0 })];
         });
     });
 }
 exports.getUserInfoByField = getUserInfoByField;
+// 
+function getFriendByField(field, value) {
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            return [2 /*return*/, init_js_1.User.where(field, value).findOne({}, ["friend"])];
+        });
+    });
+}
 // 根据条件对象获取用户信息
 function getUserInfoByCondition(condition) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
-            return [2 /*return*/, init_js_1.User.find(condition)];
+            return [2 /*return*/, init_js_1.User.find(condition, { friend: 0 })];
         });
     });
 }
 exports.getUserInfoByCondition = getUserInfoByCondition;
+console.log;
 // 判断手机是否注册
 function userExists(phone) {
     return __awaiter(this, void 0, void 0, function () {

@@ -8,13 +8,20 @@ function addUser(user: object) {
 
 // 根据字段的值获取用户信息
 async function getUserInfoByField(field:string,value:any) {
-  return User.where(field,value).findOne()
+  return User.where(field,value).findOne({},{friend:0})
+}
+
+// 
+async function getFriendByField(field:string,value:any) {
+  return User.where(field,value).findOne({},["friend"])
 }
 
 // 根据条件对象获取用户信息
 async function getUserInfoByCondition(condition:object){
-  return User.find(condition)
+  return User.find(condition,{friend:0})
 }
+
+console.log
 
 // 判断手机是否注册
 async function userExists(phone:any){

@@ -2,8 +2,8 @@ import Router from "koa-router";
 import fs=require('fs');
 import path=require('path');
 const qrImage=require("qr-image");
-// import { getUserInfoByField,userExists, getNowAccount, addUser, updateField,updateSignature} from "../../mongoDB/User";
 import * as User from "../../mongoDB/User";
+import { getUserInfoByField,userExists, getNowAccount, addUser} from "../../mongoDB/User";
 const config=require('../../config.json');
 
 // 注册
@@ -18,9 +18,9 @@ async function register(ctx:Router.RouterContext,next:any){
             fs.mkdir("assets/users/"+nowAccount,{recursive:true},function(err,result){
                 if(err){}
                 else{
-                    var qrPng = qrImage.image({
-                        account:nowAccount
-                    }.toString(), { type: 'png' });
+                    var qrPng = qrImage.image(JSON.stringify({
+                        "account":nowAccount
+                    }), { type: 'png' });
                     let qrCodeUrl="users/"+nowAccount+"/qrcode.png";
                     qrPng.pipe(fs.createWriteStream("assets/"+qrCodeUrl))
                     User.addUser({
@@ -40,20 +40,26 @@ async function register(ctx:Router.RouterContext,next:any){
         }
     })
 }
-
 // 登录
 async function login (ctx:Router.RouterContext,next:any){
         let {account,password}=ctx.query;
-        account=parseInt(account)
+        let field="account";
+        if(account.length>8){
+            field="phone";
+        }
+        else{
+            field="account";
+            account=parseInt(account)
+        }
         if(account){
-            await User.getUserInfoByField("account",account).then(result=>{
-                console.log(result)
-                if(result==null||result.length==0){
+            await getUserInfoByField(field,account).then(result=>{
+                if(result.length==0){
                     ctx.body='noAccount';
                 }else if(result.password!=password){
                     ctx.body="passwordError";
                 }else{
-                    ctx.body='validation';
+                    (result.account)
+                    ctx.body=result.account;
                 }
             }).catch(err=>{
                 console.log(err)
@@ -73,13 +79,12 @@ function getRandomAvatar(){
 // 获取用户信息
 async function getUserInfo(ctx:Router.RouterContext,next:any){
     let {account}=ctx.query;
-    console.log(await User.getUserInfoByField("account",account))
-    ctx.body=(await User.getUserInfoByField("account",account))
+    console.log(await getUserInfoByField("account",account))
+    ctx.body=(await getUserInfoByField("account",account))
 }
 
 // 修改头像
-async function updateAvatar(ctx:Router.RouterContext,next:any){
-
+async function updateAvatar(){
 }
 
 
@@ -106,5 +111,4 @@ async function updateUserInfo(ctx:Router.RouterContext,next:any){
     })
     ctx.body="ok"
 }
-
 export {login,register,getUserInfo,updateUserInfo,updateSignature}

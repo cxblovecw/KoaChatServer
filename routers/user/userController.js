@@ -46,8 +46,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var fs = require("fs");
 var path = require("path");
 var qrImage = require("qr-image");
-// import { getUserInfoByField,userExists, getNowAccount, addUser, updateField,updateSignature} from "../../mongoDB/User";
 var User = __importStar(require("../../mongoDB/User"));
+var User_1 = require("../../mongoDB/User");
 var config = require('../../config.json');
 // 注册
 function register(ctx, next) {
@@ -73,9 +73,9 @@ function register(ctx, next) {
                                         fs.mkdir("assets/users/" + nowAccount_1, { recursive: true }, function (err, result) {
                                             if (err) { }
                                             else {
-                                                var qrPng = qrImage.image({
-                                                    account: nowAccount_1
-                                                }.toString(), { type: 'png' });
+                                                var qrPng = qrImage.image(JSON.stringify({
+                                                    "account": nowAccount_1
+                                                }), { type: 'png' });
                                                 var qrCodeUrl = "users/" + nowAccount_1 + "/qrcode.png";
                                                 qrPng.pipe(fs.createWriteStream("assets/" + qrCodeUrl));
                                                 User.addUser({
@@ -107,23 +107,30 @@ exports.register = register;
 // 登录
 function login(ctx, next) {
     return __awaiter(this, void 0, void 0, function () {
-        var _a, account, password;
+        var _a, account, password, field;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
                     _a = ctx.query, account = _a.account, password = _a.password;
-                    account = parseInt(account);
+                    field = "account";
+                    if (account.length > 8) {
+                        field = "phone";
+                    }
+                    else {
+                        field = "account";
+                        account = parseInt(account);
+                    }
                     if (!account) return [3 /*break*/, 2];
-                    return [4 /*yield*/, User.getUserInfoByField("account", account).then(function (result) {
-                            console.log(result);
-                            if (result == null || result.length == 0) {
+                    return [4 /*yield*/, User_1.getUserInfoByField(field, account).then(function (result) {
+                            if (result.length == 0) {
                                 ctx.body = 'noAccount';
                             }
                             else if (result.password != password) {
                                 ctx.body = "passwordError";
                             }
                             else {
-                                ctx.body = 'validation';
+                                (result.account);
+                                ctx.body = result.account;
                             }
                         }).catch(function (err) {
                             console.log(err);
@@ -155,11 +162,11 @@ function getUserInfo(ctx, next) {
                 case 0:
                     account = ctx.query.account;
                     _b = (_a = console).log;
-                    return [4 /*yield*/, User.getUserInfoByField("account", account)];
+                    return [4 /*yield*/, User_1.getUserInfoByField("account", account)];
                 case 1:
                     _b.apply(_a, [_d.sent()]);
                     _c = ctx;
-                    return [4 /*yield*/, User.getUserInfoByField("account", account)];
+                    return [4 /*yield*/, User_1.getUserInfoByField("account", account)];
                 case 2:
                     _c.body = (_d.sent());
                     return [2 /*return*/];
@@ -169,7 +176,7 @@ function getUserInfo(ctx, next) {
 }
 exports.getUserInfo = getUserInfo;
 // 修改头像
-function updateAvatar(ctx, next) {
+function updateAvatar() {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             return [2 /*return*/];
